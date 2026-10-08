@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ScholarTrack | Student Management</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topbar"><div class="wrap nav"><a class="brand" href="{{ url_for('index') }}"><span class="brand-icon">S</span> Scholar<span class="brand-light">Track</span></a><span class="nav-label">STUDENT SUCCESS PLATFORM</span></div></header>
+  <main class="wrap main">
+    <div class="page-heading"><div><p class="eyebrow">SCHOLARTRACK · STUDENT DIRECTORY</p><h1>Student Management</h1><p class="subheading">Keep every student record organized and easy to find.</p></div><a class="button primary" href="{{ url_for('create_student') }}"><span>＋</span> Add student</a></div>
+    {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<div class="flash-list">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% endwith %}
+    <section class="stats"><div class="stat-card"><span class="stat-mark blue">♙</span><div><p>Total students</p><strong>{{ total }}</strong></div></div><div class="stat-card"><span class="stat-mark green">↗</span><div><p>Average marks</p><strong>{{ average }}<small> / 100</small></strong></div></div></section>
+    <section class="panel"><div class="panel-head"><div><h2>All students</h2><p>Search and manage student records</p></div><form class="search" method="get" action="{{ url_for('index') }}"><span>⌕</span><input name="q" value="{{ query }}" placeholder="Search name, roll no. or class" aria-label="Search students"><button type="submit">Search</button>{% if query %}<a class="clear" href="{{ url_for('index') }}">Clear</a>{% endif %}</form></div>
+      <div class="table-wrap"><table><thead><tr><th>STUDENT</th><th>ROLL NUMBER</th><th>CLASS</th><th>MARKS</th><th>CONTACT</th><th class="actions-col">ACTIONS</th></tr></thead><tbody>
+      {% for student in students %}<tr><td><div class="person"><span class="avatar">{{ student.name[:1]|upper }}</span><strong>{{ student.name }}</strong></div></td><td>{{ student.roll_no }}</td><td><span class="class-pill">{{ student.class_name }}</span></td><td><span class="marks">{{ '%g'|format(student.marks) }}<small> / 100</small></span></td><td>{{ student.contact }}</td><td class="actions"><a href="{{ url_for('edit_student', student_id=student.id) }}">Edit</a><form method="post" action="{{ url_for('delete_student', student_id=student.id) }}" onsubmit="return confirm('Delete this student record?');"><button class="delete" type="submit">Delete</button></form></td></tr>
+      {% else %}<tr><td colspan="6"><div class="empty"><span>⌕</span><strong>{% if query %}No matching students{% else %}No student records yet{% endif %}</strong><p>{% if query %}Try another search term.{% else %}Add your first student to get started.{% endif %}</p>{% if not query %}<a class="button primary small" href="{{ url_for('create_student') }}">Add student</a>{% endif %}</div></td></tr>{% endfor %}
+      </tbody></table></div><div class="panel-foot">Showing {{ students|length }} record{% if students|length != 1 %}s{% endif %}{% if query %} matching “{{ query }}”{% endif %}</div>
+    </section><footer><strong>ScholarTrack</strong> <span>•</span> Student Management System <span>•</span> Created by [Your Name]</footer>
+  </main>
+</body>
+</html>
